@@ -1,5 +1,5 @@
 /*
-    SNAKE 0.02(ALPHA_EDITION)
+    SNAKE 0.05(ALPHA_EDITION)
   ______      ____    __      _ _       _    _    ______
 /  ___\_\   | \ \\  | ||    / \ \\    | || / // |   __ ||
 | ||        | |\ \\ | ||   / //\ \\   | ||/ //  | ||
@@ -426,21 +426,11 @@ class GAMEENGINE{
         sPOINT SHOWFRUIT(){
             return this->FRUIT;
         }
+        int SHOWSCORE(){
+            return this->SCORE;
+        }
 };
 
-/*
-    GAME INTERFACE
-*/
-class INTERFACE{
-    private:
-        CHARPTR NAME;
-        int SCORE;
-    public:
-        INTERFACE(){
-        }
-        ~INTERFACE(){
-        }
-};
 class LOOP{
     private: 
         GAMEENGINE *GAMEMAIN;
@@ -479,12 +469,22 @@ class LOOP{
             (*(this->smap)).PAINT(this->guuid, A_2, A_3, '#');
             (*(this->smap)).PAINT(this->guuid, A_3, A_4, '#');
             (*(this->smap)).PAINT(this->guuid, A_4, A_1, '#');
+            (*(this->smap)).PAINT(this->guuid, (*(this->GAMEMAIN)).SHOWFRUIT() + sPOINT(1, 1), (*(this->GAMEMAIN)).SHOWFRUIT() + sPOINT(1, 1), '@');
             sPOINT P_0 = (*(this->GAMEMAIN)).SHOWITOR();
             for(sPOINT P = (*(this->GAMEMAIN)).SHOWITOR(); !(P == sPOINT(-1, -1));P = (*(this->GAMEMAIN)).SHOWITOR()){
                 (*(this->smap)).PAINT(this->guuid ,P_0 + sPOINT(1, 1), P + sPOINT(1, 1), 'O');
                 P_0 = P;
             }
-            (*(this->smap)).PAINT(this->guuid, (*(this->GAMEMAIN)).SHOWFRUIT() + sPOINT(1, 1), (*(this->GAMEMAIN)).SHOWFRUIT() + sPOINT(1, 1), '@');
+            (*(this->smap)).CLEARWINDOW(this->iuuid);
+            sPOINT B_1(0, 49);sPOINT B_2(0, 0);
+            sPOINT B_3(18, 0);sPOINT B_4(18, 49);
+            (*(this->smap)).PAINT(this->iuuid, B_2, B_3, '#');
+            (*(this->smap)).PAINT(this->iuuid, B_3, B_4, '#');
+            (*(this->smap)).PAINT(this->iuuid, B_4, B_1, '#');
+            int SCORE  = (*(this->GAMEMAIN)).SHOWSCORE();
+            for(int i = 0; i < 4; i++, SCORE /= 10){
+                (*(this->smap)).PAINT(this->iuuid, sPOINT(12 - i*2, 39), sPOINT(13 - i*2, 39), '0' + SCORE % 10);
+            }
             (*(this->smap)).PAINTMAIN();
             (*(this->smap)).PRINTSCR();
             return SUCCEED;
@@ -500,7 +500,8 @@ class LOOP{
         }
         STATUS MAINLOOP(int ini){
             int now_time = time(NULL);
-            this->guuid = (*(this->smap)).REGISTER(0, 0, 49, 49, ' ');
+            this->guuid = (*(this->smap)).REGISTER(0, 0, 50, 50, ' ');
+            this->iuuid = (*(this->smap)).REGISTER(50, 0, 19, 50, ' ');
             while(1){
                 now_time = time(NULL);
                 STATUS STAT = this->run();
