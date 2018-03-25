@@ -1,74 +1,107 @@
-/*
-    SNAKE 0.05(ALPHA_EDITION)
-  ______      ____    __      _ _       _    _    ______
-/  ___\_\   | \ \\  | ||    / \ \\    | || / // |   __ ||
-| ||        | |\ \\ | ||   / //\ \\   | ||/ //  | ||
-\ \\_____   | ||\ \\| ||  / /===\ \\  | |  //   | |=====
-    ---\\\  | || \ \| || / /_____\ \\ | || \\   |   ___||
- ______|| | | ||  \ | || | ||    | || | ||\ \\  | ||___
- \____ ///  |_||   \|_|| |_||    | || |_|| \_\\ |_____ ||
-*/
+#include "snakec.h"
+//===========================================
+sPOINT::sPOINT(){X = 0; Y = 0;}
+sPOINT::sPOINT(int x, int y){X = x; Y = y;}
+sPOINT::~sPOINT(){}
+sPOINT sPOINT::operator ~(){
+    sPOINT C(-X, -Y);
+    return C;
+}
+sPOINT sPOINT::operator +(const sPOINT B){
+    sPOINT C(0, 0);
+    C.X = X + B.X;
+    C.Y = Y + B.Y;
+    return C;
+}
+sPOINT sPOINT::operator -(const sPOINT B){
+    sPOINT C(0, 0);
+    C.X = X - B.X;
+    C.Y = Y - B.Y;
+    return C;
+}
+sPOINT sPOINT::operator /(const int B){
+    sPOINT C(0, 0);
+    C.X = X / B; 
+    C.Y = Y / B;
+    return C;
+}
+bool sPOINT::operator >(const sPOINT B){
+    return X > B.X;
+}
+bool sPOINT::operator ==(const sPOINT B){
+    return (X == B.X) && (Y == B.Y); 
+}
+bool sPOINT::operator >>(const sPOINT *B){
+    for(int i = 0;i < LEN(B, sPOINT); i++){
+        if(*this == B[i])return 1;
+    }
+    return 0;
+}
+friend float sPOINT::Abs(sPOINT  A){
+    return sqrt(DOUBLE((float)A.X) + DOUBLE((float)A.Y));
+}
+friend sPOINT sPOINT::meta(sPOINT A, sPOINT B){
+    sPOINT C = A - B;
+    return C / Abs(C);
+}
 
-#include "stx.h"
-using namespace std;
+//===================================================
+LINE::LINE(){}
+LINE::LINE(int x_1, int y_1, int x_2, int y_2){
+    X_1 = x_1;
+    Y_1 = y_1;
+    X_2 = x_2;
+    Y_2 = y_2;
+    COLOR = '#';
+}
+LINE::LINE(int x_1, int y_1, int x_2, int y_2, char color){
+    X_1 = x_1;
+    Y_1 = y_1;
+    X_2 = x_2;
+    Y_2 = y_2;
+    COLOR = color;
+}
+//=============================================
+WINDOW::WINDOW(){}
+WINDOW::WINDOW(int x, int y, int width, int height, int uuid){
+    X = x; Y = y;
+    WIDTH = width;
+    HEIGHT = height;
+    WUUID = uuid;
+    BACKGROUND = 32;
+}
+WINDOW::WINDOW(int x, int y, int width, int height, char color, int uuid){
+    X = x; Y = y;
+    WIDTH = width;
+    HEIGHT = height;
+    BACKGROUND = color;
+    WUUID = uuid;
+}
+void WINDOW::DRAWLINE(sPOINT A, sPOINT B){
+    LINE C(A.X, A.Y, B.X, B.Y);
+    MAP.push_back(C);
+}
+void WINDOW::DRAWLINE(sPOINT A, sPOINT B, char color){
+    LINE C(A.X, A.Y, B.X, B.Y, color);
+    MAP.push_back(C);
+}
+void WINDOW::CLEARLINE(){
+    MAP.clear();
+}
+char WINDOW::WBACKGROUND(){
+    return this->BACKGROUND;
+}
+vector<LINE>::iterator WINDOW::lend(){
+    return MAP.end();
+}   
+vector<LINE>::iterator WINDOW::lbegin(){
+    return MAP.begin();
+}
+int WINDOW::lsize(){
+    return MAP.size();
+}
+//==================================================
 
-/*
-    sPOINT. It's just a point on the map.
-    X:X position
-    Y:Y position
-*/
-struct sPOINT{
-    int X, Y;
-    sPOINT(){X = 0; Y = 0;}
-    sPOINT(int x, int y){X = x; Y = y;}
-    ~sPOINT(){}
-    sPOINT operator ~(){
-        sPOINT C(-X, -Y);
-        return C;
-    }
-    sPOINT operator +(const sPOINT B){
-        sPOINT C(0, 0);
-        C.X = X + B.X;
-        C.Y = Y + B.Y;
-        return C;
-    }
-    sPOINT operator -(const sPOINT B){
-        sPOINT C(0, 0);
-        C.X = X - B.X;
-        C.Y = Y - B.Y;
-        return C;
-    }
-    sPOINT operator /(const int B){
-        sPOINT C(0, 0);
-        C.X = X / B; 
-        C.Y = Y / B;
-        return C;
-    }
-    bool operator >(const sPOINT B){
-        return X > B.X;
-    }
-    bool operator ==(const sPOINT B){
-        return (X == B.X) && (Y == B.Y); 
-    }
-    //WARNING: >> means "in"
-    bool operator >>(const sPOINT *B){
-        for(int i = 0;i < LEN(B, sPOINT); i++){
-            if(*this == B[i])return 1;
-        }
-        return 0;
-    }
-    friend float Abs(sPOINT  A){
-        return sqrt(DOUBLE((float)A.X) + DOUBLE((float)A.Y));
-    }
-    friend sPOINT meta(sPOINT A, sPOINT B){
-        sPOINT C = A - B;
-        return C / Abs(C);
-    }
-};
-
-/*
-    keyboard listener
-*/
 void *get_key(void *key){
     char* T_KEY = (char*)key;
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);   
@@ -76,112 +109,30 @@ void *get_key(void *key){
     while(1)*T_KEY = getch();
     pthread_exit(NULL);
 }
-class KEYBOARD{
-    private:
-        char KEY;
-        pthread_t KEY_THREAD;
-        
-    public:
-        KEYBOARD(){
-            this->KEY = 0;
-        }
-        /*
-            0:success;1:normal exit;-1:bad exit;
-        */
-        int LISTEN(){
-            int rc = pthread_create(&this->KEY_THREAD, NULL, get_key, (void*)&this->KEY);
-            return rc;
-        }
-        int STOP(){
-            int rc = pthread_cancel(this->KEY_THREAD);
-            return rc;
-        }
-        char THISKEY(){
-            return this->KEY;
-        }
-        ~KEYBOARD(){
-        }
-};
-/*
-    MAIN REGISTER AND PAINTER
-*/
-
-struct LINE{
-    int X_1, Y_1, X_2, Y_2;
-    char COLOR;
-    LINE(){}
-    LINE(int x_1, int y_1, int x_2, int y_2){
-        X_1 = x_1;
-        Y_1 = y_1;
-        X_2 = x_2;
-        Y_2 = y_2;
-        COLOR = '#';
-    }
-    LINE(int x_1, int y_1, int x_2, int y_2, char color){
-        X_1 = x_1;
-        Y_1 = y_1;
-        X_2 = x_2;
-        Y_2 = y_2;
-        COLOR = color;
-    }
-};
-struct WINDOW{
-    int X, Y, WIDTH ,HEIGHT, WUUID;
-    vector<LINE> MAP;
-    char BACKGROUND;
-    WINDOW(){}
-    WINDOW(int x, int y, int width, int height, int uuid){
-        X = x; Y = y;
-        WIDTH = width;
-        HEIGHT = height;
-        WUUID = uuid;
-        BACKGROUND = 32;
-    }
-    WINDOW(int x, int y, int width, int height, char color, int uuid){
-        X = x; Y = y;
-        WIDTH = width;
-        HEIGHT = height;
-        BACKGROUND = color;
-        WUUID = uuid;
-    }
-    void DRAWLINE(sPOINT A, sPOINT B){
-        LINE C(A.X, A.Y, B.X, B.Y);
-        MAP.push_back(C);
-    }
-    void DRAWLINE(sPOINT A, sPOINT B, char color){
-        LINE C(A.X, A.Y, B.X, B.Y, color);
-        MAP.push_back(C);
-    }
-    void CLEARLINE(){
-        MAP.clear();
-    }
-    char WBACKGROUND(){
-        return this->BACKGROUND;
-    }
-    vector<LINE>::iterator lend(){
-        return MAP.end();
-    }   
-    vector<LINE>::iterator lbegin(){
-        return MAP.begin();
-    }
-    int lsize(){
-        return MAP.size();
-    }
-};
-class SMAP{
-    private:
-        int MWIDTH, MHEIGHT;
-        int WNUM;
-        vector<WINDOW> REGISTED;
-        char BITMAP[127][127];
-    public:
-        SMAP(int LEN_X, int LEN_Y){
+KEYBOARD::KEYBOARD(){
+    this->_KEY = 0;
+}
+int KEYBOARD::LISTEN(){
+    int rc = pthread_create(&this->KEY_THREAD, NULL, get_key, (void*)&this->KEY);
+    return rc;
+}
+int KEYBOARD::STOP(){
+    int rc = pthread_cancel(this->KEY_THREAD);
+    return rc;
+}
+char KEYBOARD::THISKEY(){
+    return this->_KEY;
+}
+KEYBOARD::~KEYBOARD(){
+}
+//================================================
+        SMAP::SMAP(int LEN_X, int LEN_Y){
             WNUM = 0;
             this->MWIDTH = LEN_X;
             this->MHEIGHT =  LEN_Y;
         }
-        ~SMAP(){}
-        int REGISTER(int X, int Y, int WIDTH, int HEIGHT, char BCOLOR){
+        SMAP::~SMAP(){}
+        int SMAP::REGISTER(int X, int Y, int WIDTH, int HEIGHT, char BCOLOR){
             this->WNUM++;
             WINDOW window(X, Y, WIDTH, HEIGHT, BCOLOR,this->WNUM);
             this->REGISTED.push_back(window);
