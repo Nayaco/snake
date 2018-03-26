@@ -7,6 +7,8 @@
     ---\\\  | || \ \| || / /_____\ \\ | || \\   |   ___||
  ______|| | | ||  \ | || | ||    | || | ||\ \\  | ||___
  \____ ///  |_||   \|_|| |_||    | || |_|| \_\\ |_____ ||
+
+It's called snake core for it's basicly build for my snake project
 */
 #ifndef STX_H
 #define STX_H
