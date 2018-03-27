@@ -2,9 +2,7 @@
     main part of the snakecore
 */
 
-
 #include "snakec.h"
-
 
 //==========================================================
 sPOINT::sPOINT(){X = 0; Y = 0;}
@@ -44,10 +42,12 @@ bool sPOINT::operator >>(const sPOINT *B){
     }
     return 0;
 }
-friend float sPOINT::Abs(sPOINT  A){
+
+float Abs(sPOINT  A){
     return sqrt(DOUBLE((float)A.X) + DOUBLE((float)A.Y));
 }
-friend sPOINT sPOINT::meta(sPOINT A, sPOINT B){
+
+sPOINT meta(sPOINT A, sPOINT B){
     sPOINT C = A - B;
     return C / Abs(C);
 }
@@ -98,10 +98,10 @@ void WINDOW::CLEARLINE(){
 char WINDOW::WBACKGROUND(){
     return this->BACKGROUND;
 }
-vector<LINE>::iterator WINDOW::lend(){
+std::vector<LINE>::iterator WINDOW::lend(){
     return MAP.end();
 }   
-vector<LINE>::iterator WINDOW::lbegin(){
+std::vector<LINE>::iterator WINDOW::lbegin(){
     return MAP.begin();
 }
 int WINDOW::lsize(){
@@ -120,7 +120,7 @@ KEYBOARD::KEYBOARD(){
     this->_KEY = 0;
 }
 int KEYBOARD::LISTEN(){
-    int rc = pthread_create(&this->KEY_THREAD, NULL, get_key, (void*)&this->KEY);
+    int rc = pthread_create(&this->KEY_THREAD, NULL, get_key, (void*)&this->_KEY);
     return rc;
 }
 int KEYBOARD::STOP(){
@@ -228,7 +228,7 @@ void SMAP::PRINTSCR(){
     HANDLE hout=GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleCursorPosition(hout,coord);
     for(int i = 0; i < this->MHEIGHT; i++){
-        std::cout<<BITMAP[i]<<endl;
+        std::cout<<BITMAP[i]<<std::endl;
     }
 }
 //=======================================================================
