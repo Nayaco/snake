@@ -7,7 +7,7 @@
     ---\\\  | || \ \| || / /_____\ \\ | || \\   |   ___||
  ______|| | | ||  \ | || | ||    | || | ||\ \\  | ||___
  \____ ///  |_||   \|_|| |_||    | || |_|| \_\\ |_____ ||
- 
+
 It's called snake core for it's basicly build for my snake project
 ==================================================================
  * Copyright(c) 1999-2018 NyancoChan 100% Indivisual
@@ -36,9 +36,7 @@ It's called snake core for it's basicly build for my snake project
 
 #ifndef STX_H
 #define STX_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+
 #include <windows.h>
 #include <cstdio>
 #include <cstdlib> 
@@ -236,7 +234,7 @@ class SMAP{
         int MWIDTH, MHEIGHT;
         int WNUM;
         std::vector<WINDOW> REGISTED;
-        char BITMAP[127][127];
+        char BITMAP[255][255];
     public:
         SMAP(int LEN_X, int LEN_Y);
         ~SMAP();
@@ -246,6 +244,7 @@ class SMAP{
         int PAINT(int uuid, sPOINT A, sPOINT B);
         int PAINT(int uuid, sPOINT A, sPOINT B, char COLOR);
         void PAINTMAIN();
+        void DELAY(uint16_t _gap);
         void PRINTSCR();
 };
 //=========================================================
@@ -253,6 +252,7 @@ class SMAP{
     keyboard listener
 */
 void *get_key(void *key);
+//KEYBOARD LISTENER
 class KEYBOARD{
     private:
         char _KEY;
@@ -266,9 +266,6 @@ class KEYBOARD{
         ~KEYBOARD();
 };
 //=========================================================
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

@@ -231,4 +231,7 @@ void SMAP::PRINTSCR(){
         std::cout<<BITMAP[i]<<std::endl;
     }
 }
+void SMAP::DELAY(uint16_t _gap){
+    Sleep(_gap);
+}
 //=======================================================================
