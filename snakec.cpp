@@ -107,31 +107,6 @@ std::vector<LINE>::iterator WINDOW::lbegin(){
 int WINDOW::lsize(){
     return MAP.size();
 }
-//=========================================================
-
-void *get_key(void *key){
-    char* T_KEY = (char*)key;
-    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);   
-    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,   NULL);
-    while(1)*T_KEY = getch();
-    pthread_exit(NULL);
-}
-KEYBOARD::KEYBOARD(){
-    this->_KEY = 0;
-}
-int KEYBOARD::LISTEN(){
-    int rc = pthread_create(&this->KEY_THREAD, NULL, get_key, (void*)&this->_KEY);
-    return rc;
-}
-int KEYBOARD::STOP(){
-    int rc = pthread_cancel(this->KEY_THREAD);
-    return rc;
-}
-char KEYBOARD::THISKEY(){
-    return this->_KEY;
-}
-KEYBOARD::~KEYBOARD(){
-}
 //================================================
 SMAP::SMAP(int LEN_X, int LEN_Y){
     WNUM = 0;
@@ -233,5 +208,31 @@ void SMAP::PRINTSCR(){
 }
 void SMAP::DELAY(uint16_t _gap){
     Sleep(_gap);
+}
+//=========================================================
+
+void *get_key(void *key){
+    KEY_VALUE *T_KEY = (KEY_VALUE*)key;
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);   
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+    while(1)*T_KEY = getch();
+    pthread_exit(NULL);
+}
+
+KEYBOARD::KEYBOARD(){
+    this->_KEY = 0;
+}
+int KEYBOARD::LISTEN(){
+    int rc = pthread_create(&this->KEY_THREAD, NULL, get_key, (void*)&this->_KEY);
+    return rc;
+}
+int KEYBOARD::STOP(){
+    int rc = pthread_cancel(this->KEY_THREAD);
+    return rc;
+}
+char KEYBOARD::THISKEY(){
+    return this->_KEY;
+}
+KEYBOARD::~KEYBOARD(){
 }
 //=======================================================================

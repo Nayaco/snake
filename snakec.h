@@ -49,6 +49,8 @@ It's called snake core for it's basicly build for my snake project
 #include <queue>
 #include <pthread.h>
 
+#define CALLBACK __stdcall
+
 #define LL long long
 #define INTPTR int*
 #define CHARPTR char*
@@ -80,6 +82,7 @@ typedef unsigned int STATUS;
 #define OVERFLOWED          3
 
 /*key input*/
+typedef char KEY_VALUE;        //key_num
 #define KEY_SPACE          32
 #define KEY_APOSTROPHE     39  /* ' */
 #define KEY_COMMA          44  /* , */
@@ -256,17 +259,23 @@ void *get_key(void *key);
 class KEYBOARD{
     private:
         char _KEY;
-        pthread_t KEY_THREAD;    
+        pthread_t KEY_THREAD;  
+        std::vector<char> _BINDLIST;
+        STATUS (*_CallBack)();
     public:
         KEYBOARD();
         //0:success;1:normal exit;-1:bad exit;
         int LISTEN();
+        //stop listening
         int STOP();
+        //return nowkey
         char THISKEY();
+        //bind a event
+        int BIND(KEY_VALUE key, STATUS (*_callback)());
         ~KEYBOARD();
 };
 //=========================================================
-
+#undef CALLBACK
 #endif
 
 //INCLUDE WRITES HERE
